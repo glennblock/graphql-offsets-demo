@@ -20,7 +20,7 @@ const typeDefs = gql`
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
-    books(offset: Int, limit: Int): [Book]
+    books(offset: Int, limit: Int = 5): [Book]
   }
 `;
 
@@ -33,6 +33,13 @@ books.sort((a,b)=>a.title.localeCompare(b.title));
 const resolvers = {
   Query: {
     books: (parent, args, context, info) => {
+      if (args.limit < 1 || args.limit > 5) {
+        throw new Error("limit but be between 0 and 7");
+      }
+      var offset = args.offset;
+      if (args.offset == undefined) {
+        args.offset = 0;
+      }
       return books.slice(args.offset, args.offset + args.limit);
     }
   },
